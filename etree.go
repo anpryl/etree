@@ -87,6 +87,9 @@ type WriteSettings struct {
 	// return followed by a linefeed ("\r\n") when outputting a newline. If
 	// false, only a linefeed is used ("\n"). Default: false.
 	UseCRLF bool
+
+	// IgnoreComments will skip comments on Write operations.
+	IgnoreComments bool
 }
 
 // newWriteSettings creates a default WriteSettings record.
@@ -96,6 +99,7 @@ func newWriteSettings() WriteSettings {
 		CanonicalText:    false,
 		CanonicalAttrVal: false,
 		UseCRLF:          false,
+		IgnoreComments:   false,
 	}
 }
 
@@ -1368,6 +1372,9 @@ func (c *Comment) setIndex(index int) {
 
 // writeTo serialies the comment to the writer.
 func (c *Comment) writeTo(w *bufio.Writer, s *WriteSettings) {
+	if s.IgnoreComments {
+		return
+	}
 	w.WriteString("<!--")
 	w.WriteString(c.Data)
 	w.WriteString("-->")
